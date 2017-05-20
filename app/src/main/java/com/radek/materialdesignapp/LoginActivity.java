@@ -1,6 +1,7 @@
 package com.radek.materialdesignapp;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,8 +17,10 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -40,6 +43,10 @@ public class LoginActivity extends AppCompatActivity {
     FloatingActionButton fab;
     @InjectView(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
+    @InjectView(R.id.header)
+    ImageView header;
+    @InjectView(R.id.mainView)
+    RelativeLayout mainView;
 
 
     private Animation shake;
@@ -49,7 +56,14 @@ public class LoginActivity extends AppCompatActivity {
         public void onClick(View v) {
             Snackbar.make(coordinatorLayout, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
-            startActivity(new Intent(getApplicationContext(), DetailActivity.class));
+
+            if (password.getText().toString().equals(mypassword)) {
+                startActivity(new Intent(getApplicationContext(), DrawerActivity.class));
+            } else {
+                ///  passwordEditText.setError("to nie to hasło");
+                passwordImputLayout.setError("to nie to haslo");
+//            }
+            }
         }
     };
 
@@ -63,31 +77,36 @@ public class LoginActivity extends AppCompatActivity {
         initToolbar();
 
         shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-       // android.startAnimation(shake);
-}
-
+        android.startAnimation(shake);
+    }
 
     private void setView() {
-        fab.setOnClickListener(myFabListener);
-//        android.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                android.clearAnimation();
-//            }
-//        });
-
-        android.setOnTouchListener(new View.OnTouchListener() {
+        mainView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                    int finalRadius = Math.max(android.getWidth(), android.getHeight()) / 2;
-                    Animator anim =
-                            ViewAnimationUtils.createCircularReveal(android, (int) event.getX(), (int) event.getY(), 0, finalRadius);
-                    android.setVisibility(View.VISIBLE);
-                    anim.start();
-                    return false;
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        });
+        fab.setOnClickListener(myFabListener);
+        android.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.clearAnimation();
             }
         });
 
+        header.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int finalRadius = Math.max(header.getWidth(), header.getHeight()) / 2;
+                Animator anim =
+                        ViewAnimationUtils.createCircularReveal(header, (int) event.getX(), (int) event.getY(), 0, finalRadius);
+                header.setVisibility(View.VISIBLE);
+                anim.start();
+                return false;
+            }
+        });
 
 
     }
